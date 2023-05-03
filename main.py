@@ -6,7 +6,7 @@ import tkinter.scrolledtext as st
 from run_info import run_info
 import merge
 import outinfo
-import compileall
+import compileallpdf
 import singlecheck
 
 # 定义一个主窗口类，继承自tk.Tk
@@ -59,7 +59,7 @@ class MainWindow(tk.Tk):
         # 在这里书写转换文件的函数
         run_info(self.output_text,"运行全编译的函数\n")
         file_path = self.tab3.entry.get()
-        compileall.compile_pdfs(file_path, self.output_text)
+        compileallpdf.compile_pdfs(file_path, self.output_text)
 
 
     def run_tab4(self):
