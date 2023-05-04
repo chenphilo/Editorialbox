@@ -8,6 +8,7 @@ import merge
 import outinfo
 import compileallpdf
 import singlecheck
+import charti_build_content
 
 # 定义一个主窗口类，继承自tk.Tk
 class MainWindow(tk.Tk):
@@ -26,11 +27,13 @@ class MainWindow(tk.Tk):
         self.tab2 = InfoTab(self.tab_control, "检查tex信息", self.run_tab2)
         self.tab3 = CompTab(self.tab_control, "编译全部", self.run_tab3)
         self.tab4 = SingleTab(self.tab_control, "检查单字成行", self.run_tab4)
+        self.tab5 = IndexTab(self.tab_control, "生成目录", self.run_tab5)
         # 添加标签页到标签框架
         self.tab_control.add(self.tab1, text=self.tab1.name)
         self.tab_control.add(self.tab2, text=self.tab2.name)
         self.tab_control.add(self.tab3, text=self.tab3.name)
         self.tab_control.add(self.tab4, text=self.tab4.name)
+        self.tab_control.add(self.tab5, text=self.tab5.name)
         # 显示标签框架
         self.tab_control.pack(expand=1, fill="both")
 
@@ -43,30 +46,32 @@ class MainWindow(tk.Tk):
 
     # 定义四个函数，用于运行每个标签页对应的功能
     def run_tab1(self):
-        # 在这里书写合并文件的函数
         run_info(self.output_text,"运行合并文件的函数\n")
         file_path = self.tab1.entry.get()
         merge.merge_pdfs(file_path, self.output_text)
 
     def run_tab2(self):
-        # 在这里书写分割文件的函数
         run_info(self.output_text,"运行检查文件的函数\n")
         file_path = self.tab2.entry.get()
         outinfo.main(file_path, self.output_text)
 
 
     def run_tab3(self):
-        # 在这里书写转换文件的函数
         run_info(self.output_text,"运行全编译的函数\n")
         file_path = self.tab3.entry.get()
         compileallpdf.compile_pdfs(file_path, self.output_text)
 
 
     def run_tab4(self):
-        # 在这里书写压缩文件的函数
         run_info(self.output_text,"运行检查单字成行的函数\n")
         file_path = self.tab4.entry.get()
         singlecheck.main(file_path,self.output_text)
+    
+    def run_tab5(self):
+        run_info(self.output_text,"运行生成目录的函数\n")
+        file_path = self.tab5.entry.get()
+        charti_build_content.generate_tex(file_path,"en",self.output_text)
+        charti_build_content.generate_tex(file_path,"ch",self.output_text)
 
         
 
@@ -94,7 +99,7 @@ class TabPage(ttk.Frame):
         self.run_button = tk.Button(self, text="运行", command=self.run_function)
         self.run_button.grid(column=0, row=3, sticky="nsew")
 
-    # 定义一个函数，用于浏览文件并获取文件路径
+    # 默认读取路径
     def browse_file(self):
         path = fd.askdirectory() # 更改为askdirectory()方法
         self.entry.delete(0, tk.END) # 删除当前文本框中的内容
@@ -135,6 +140,25 @@ class SingleTab(TabPage):
         instruction_text = "使用说明：请输入pdf完整路径，例如：E:\Github\Studies_in_Logic\\2023年第2期(69)\文件.pdf"
         self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=400-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
+    # 重定义读取文件
+    def browse_file(self):
+        path = fd.askopenfilename(filetypes=[("pdf", "*.pdf")])
+        self.entry.delete(0, tk.END)
+        self.entry.insert(0, path)
+
+# 生成目录tab类
+class IndexTab(TabPage):
+    def __init__(self, parent, name, run_function):
+        super().__init__(parent, name, run_function)
+        # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
+        instruction_text = "使用说明：请输入【检查tex信息】生成的txt的完整路径，例如：E:\Github\Studies_in_Logic\\2023年第2期(69)\文件.txt\n注意生成的目录不能直接使用，需要再完善，因为有换行等问题需要斟酌。"
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=400-20)
+        self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
+    # 重定义读取文件
+    def browse_file(self):
+        path = fd.askopenfilename(filetypes=[("txt", "*.txt")])
+        self.entry.delete(0, tk.END)
+        self.entry.insert(0, path)
 
 
 # 创建主窗口对象并运行主循环

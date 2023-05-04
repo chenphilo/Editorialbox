@@ -3,6 +3,45 @@ import glob
 import PyPDF2
 from run_info import run_info
 
+import re
+
+# 判断全是英文
+def no_chinese(s):
+    if re.search('[\u4e00-\u9fa5]', s) is None:
+        return True
+    else:
+        return False
+
+
+# 获取一行最后的{}中的内容
+def getcontent(string):
+    pattern = r"\{([^{}]+)\}(?=[^{}]*$)"
+    match = re.search(pattern, string)
+    if match:
+        content = match.group(1)
+        return content
+
+#获取标题，可能有换行的情况
+def extract_title(text):
+    flag = 0
+    for i, char in enumerate(text):
+        if char == '{':
+            if i==0:
+                continue
+            flag = flag + 1
+        elif char == '}':
+            flag = flag - 1
+        if flag == -1:
+            return text[1:i].replace('\n', '')
+        
+    pattern = r'{([^{}]+)}'
+    match = re.search(pattern, text)
+    if match:
+        return match.group(1)
+    else:
+        return None
+
+
 def process_folders(path, output_dir,out_txt):
     try:
         # 获取所有匹配的文件夹
@@ -39,14 +78,29 @@ def process_folders(path, output_dir,out_txt):
                         output += f"页数：{total_pages}\n"
                     for i, line in enumerate(lines):
                         if '请输入论文题目' in line:
-                            title = lines[i+1]
-                            output += f"论文题目: {title}\n"
+                            tmptext = lines[i+1]+"\n"+lines[i+2]
+                            output += f"中文标题: {extract_title(tmptext)}\n"
                         elif '请输入英文标题' in line:
-                            eng_title = lines[i+1]
-                            output += f"英文标题: {eng_title}\n"
-                        elif '请输入第一作者姓名' in line:
-                            author_name = lines[i+1]
-                            output += f"作者姓名: {author_name}\n"
+                            tmptext = lines[i+1]+"\n"+lines[i+2]
+                            output += f"英文标题: {extract_title(tmptext)}\n"
+                        elif '第一作者姓名' in line:
+                            author_name = getcontent(lines[i+1])
+                            if no_chinese(author_name):
+                                output += f"第一作者英文: {author_name}\n"
+                            else:
+                                output += f"第一作者中文: {author_name}\n"
+                        elif '第二作者姓名' in line and line[0]!='%':
+                            author_name = getcontent(lines[i])
+                            if no_chinese(author_name):
+                                output += f"第二作者英文: {author_name}\n"
+                            else:
+                                output += f"第二作者中文: {author_name}\n"
+                        elif '第三作者姓名' in line and line[0]!='%':
+                            author_name = getcontent(lines[i])
+                            if no_chinese(author_name):
+                                output += f"第三作者英文: {author_name}\n"
+                            else:
+                                output += f"第三作者中文: {author_name}\n"
                         elif 'documentclass' in line:
                             zihao = line.split(",")[1]
                             output += f"字号 {zihao}\n"
@@ -82,7 +136,8 @@ def main(script_path, out_txt):
     try:
         run_info(out_txt, "当前目录为：" + str(script_path)+"\n")
         process_folders(script_path, script_path, out_txt)
-        run_info(out_txt, "检查文件生成成功，请查看。\n")
     except Exception as e:
         run_info(out_txt, e)
         run_info(out_txt, "请确认目录格式为03 Ming_Xiao，内部文件为Ming_Xiao.tex的格式")
+
+    run_info(out_txt, "检查文件生成成功，请查看。\n")
