@@ -2,6 +2,65 @@ import datetime
 import os
 from run_info import run_info
 
+# ch_content_head
+ch_content_head = r'''
+\documentclass[b5paper,11pt,onecolumn,twoside]{ctexart}
+\pagestyle{empty}
+\usepackage[total={130mm,203mm}, top=28.3mm, headheight=20pt, headsep=4truemm]{geometry}%调整版式
+\usepackage{tabularx}
+\setmainfont{Times New Roman}
+
+\newcommand{\vdistance}{\\[4.8ex]}%调整行间隔
+
+\begin{document}
+
+\begin{flushright}
+\renewcommand{\baselinestretch}{1.3}
+\zihao{5}
+\heiti{逻辑学研究（双月刊）\\
+第\ 15 卷，第\ 6 期，总第\ 67 期}\\
+\heiti{2022 年第\ 6 期，12月\ 18 日出版}
+\end{flushright}
+\vspace{7.8ex}{\songti{\huge{\bfseries  目 \ \ \ \ \ \ \ \ 录}}}
+
+\noindent\hrulefill \vspace{2.5ex}\\
+\begin{tabularx}{\textwidth}
+{l@{\hspace{4.5em}}r@{\hspace{-6.1em}}r}	
+{\large \bf{专栏：XXX}}
+&&\textit{\large 主持人：XXX}
+\\[5.0 ex]
+'''
+
+ch_content_end = r'''
+\end{tabularx}
+\end{document}
+'''
+en_content_head = r'''
+\documentclass[b5paper,10pt,onecolumn,twoside]{ctexart}
+\pagestyle{empty}%不显示页码
+\usepackage[total={130mm,203mm}, top=20.3mm, headheight=20pt, headsep=4truemm]{geometry}%调整版式
+\usepackage{tabularx}
+\setmainfont{Times New Roman}
+
+
+\newcommand{\vdistance}{\\[4mm]}%调整行间隔
+
+\begin{document}
+\begin{flushright}
+\zihao{-4}
+\textbf{Studies in Logic\\
+Volume 16, Number 2, April 2023}
+\end{flushright}
+\vspace{0.5ex} {\rmfamily{\bfseries TABLE OF CONTENTS}} \vspace{-0.5ex}
+
+\noindent\hrulefill{\rmfamily} \vspace{1.3ex}\\
+\begin{tabularx}{\textwidth}{l@{\hspace{-1.2em}}r}
+'''
+en_content_end = r'''
+\end{tabularx}
+\end{document}
+'''
+
 
 # 中文文章的目录构建
 
@@ -101,15 +160,13 @@ def generate_tex(path,flag,out_txt):#生成TeX文件
             tex_path = os.path.abspath(os.path.join(os.path.dirname(path), 'Chinese Content_{}.tex'.format(date_str)))
             with open(tex_path, 'w', encoding='utf-8') as file:
                 # 写入模板头部
-                with open("ch_content_head.txt", 'r', encoding='utf-8') as another_file:
-                    file.write(another_file.read())
+                file.write(ch_content_head)
                 file.write("\n\n%中间主体\n\n")
                 # 写入目录
                 for info in process_file(path,flag):
                     file.write(info)
                 # 写入模板尾部
-                with open("ch_content_end.txt", 'r', encoding='utf-8') as another_file:
-                    file.write(another_file.read())
+                file.write(ch_content_end)
             run_info(out_txt,'中文目录TeX文件已生成\n')
         except Exception as e:
             run_info(out_txt,e)
@@ -123,15 +180,13 @@ def generate_tex(path,flag,out_txt):#生成TeX文件
             tex_path = os.path.abspath(os.path.join(os.path.dirname(path), 'contents_{}.tex'.format(date_str)))
             with open(tex_path, 'w', encoding='utf-8') as file:
                 # 写入模板头部
-                with open("en_content_head.txt", 'r', encoding='utf-8') as another_file:
-                    file.write(another_file.read())
+                file.write(en_content_head)
                 file.write("\n\n%中间主体\n\n")
                 # 写入目录
                 for info in process_file(path,flag):
                     file.write(info)
                 # 写入模板尾部
-                with open("en_content_end.txt", 'r', encoding='utf-8') as another_file:
-                    file.write(another_file.read())
+                file.write(en_content_end)
             run_info(out_txt,'英文目录TeX文件已生成\n')
         except Exception as e:
             run_info(out_txt,e)
