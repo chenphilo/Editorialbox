@@ -9,13 +9,14 @@ import outinfo
 import compileallpdf
 import singlecheck
 import charti_build_content
+import c_bibtex
 
 # 定义一个主窗口类，继承自tk.Tk
 class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
         # 设置窗口位置，大小
-        windowwidth = 400
+        windowwidth = 500
         windowheight = 500
         self.geometry(f"{windowwidth}x{windowheight}+500+200")
         # 设置窗口标题
@@ -28,12 +29,14 @@ class MainWindow(tk.Tk):
         self.tab3 = CompTab(self.tab_control, "编译全部", self.run_tab3)
         self.tab4 = SingleTab(self.tab_control, "检查单字成行", self.run_tab4)
         self.tab5 = IndexTab(self.tab_control, "生成目录", self.run_tab5)
+        self.tab6 = CbibtexTab(self.tab_control, "中文参考文献快速转bibtex", self.run_tab6)
         # 添加标签页到标签框架
         self.tab_control.add(self.tab1, text=self.tab1.name)
         self.tab_control.add(self.tab2, text=self.tab2.name)
         self.tab_control.add(self.tab3, text=self.tab3.name)
         self.tab_control.add(self.tab4, text=self.tab4.name)
         self.tab_control.add(self.tab5, text=self.tab5.name)
+        self.tab_control.add(self.tab6, text=self.tab6.name)
         # 显示标签框架
         self.tab_control.pack(expand=1, fill="both")
 
@@ -73,6 +76,11 @@ class MainWindow(tk.Tk):
         charti_build_content.generate_tex(file_path,"en",self.output_text)
         charti_build_content.generate_tex(file_path,"ch",self.output_text)
 
+    def run_tab6(self):
+        run_info(self.output_text,"运行中文文献bibtex的函数\n")
+        file_path = self.tab6.entry.get()
+        c_bibtex.cbibtex_process_file(file_path, self.output_text)
+
         
 
 # 定义一个标签页类，继承自ttk.Frame
@@ -111,7 +119,7 @@ class MergeTab(TabPage):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
         instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可合并所有pdf"
-        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=400-20)
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
         
 # 输出信息tab类
@@ -120,7 +128,7 @@ class InfoTab(TabPage):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
         instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可在该目录生成检查文档"
-        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=400-20)
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
 
 # 全部编译tab类
@@ -129,7 +137,7 @@ class CompTab(TabPage):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
         instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可编译所有子文件中tex"
-        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=400-20)
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
 
 # 单字成行tab类
@@ -138,7 +146,7 @@ class SingleTab(TabPage):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
         instruction_text = "使用说明：请输入pdf完整路径，例如：E:\Github\Studies_in_Logic\\2023年第2期(69)\文件.pdf"
-        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=400-20)
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
     # 重定义读取文件
     def browse_file(self):
@@ -152,7 +160,21 @@ class IndexTab(TabPage):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
         instruction_text = "使用说明：请输入【检查tex信息】生成的txt的完整路径，例如：E:\Github\Studies_in_Logic\\2023年第2期(69)\文件.txt\n注意生成的目录不能直接使用，需要再完善，因为有换行等问题需要斟酌。"
-        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=400-20)
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
+        self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
+    # 重定义读取文件
+    def browse_file(self):
+        path = fd.askopenfilename(filetypes=[("txt", "*.txt")])
+        self.entry.delete(0, tk.END)
+        self.entry.insert(0, path)
+
+# 中文参考文献快速转bibtex类
+class CbibtexTab(TabPage):
+    def __init__(self, parent, name, run_function):
+        super().__init__(parent, name, run_function)
+        # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
+        instruction_text = "使用说明：对于大量例如:\n[45]孙中原，“日本学者对中国古代逻辑的研究”，国外社会科学，1983年第4期，第62-65页。\n的中文参考文献，可尝试使用该功能快速转换为bibtex格式，再进行手动修改。\n注意输入完整路径，例如：E:\Github\Studies_in_Logic\\2023年第2期(69)\文件.txt"
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
     # 重定义读取文件
     def browse_file(self):

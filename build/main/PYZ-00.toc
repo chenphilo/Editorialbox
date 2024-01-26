@@ -566,6 +566,7 @@
   ('bz2',
    'C:\\Users\\wakakap\\AppData\\Local\\Programs\\Python\\Python310\\lib\\bz2.py',
    'PYMODULE'),
+  ('c_bibtex', 'E:\\Github\\Editorialbox\\c_bibtex.py', 'PYMODULE'),
   ('calendar',
    'C:\\Users\\wakakap\\AppData\\Local\\Programs\\Python\\Python310\\lib\\calendar.py',
    'PYMODULE'),
