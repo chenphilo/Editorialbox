@@ -126,7 +126,7 @@ class MergeTab(TabPage):
     def __init__(self, parent, name, run_function):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
-        instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可合并所有pdf"
+        instruction_text = "使用说明：输入路径为一期的目录，例如：\nE:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可合并所有pdf，注意此时文件夹格式应该加上序号，例如：02 Ming_Xiao"
         self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
         
@@ -135,7 +135,7 @@ class InfoTab(TabPage):
     def __init__(self, parent, name, run_function):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
-        instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可在该目录生成检查文档"
+        instruction_text = "使用说明：输入路径为一期的目录，例如：\nE:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可在该目录生成检查文档，注意此时文件夹格式应该加上序号，例如：02 Ming_Xiao"
         self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
 
@@ -144,7 +144,7 @@ class CompTab(TabPage):
     def __init__(self, parent, name, run_function):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
-        instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可编译所有子文件中tex"
+        instruction_text = "使用说明：输入路径为一期的目录，例如：\nE:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可编译所有子文件中tex，注意此时文件夹格式应该加上序号，例如：02 Ming_Xiao"
         self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
 
@@ -195,7 +195,7 @@ class DelTab(TabPage):
     def __init__(self, parent, name, run_function):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
-        instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可删除所有临时文件"
+        instruction_text = "使用说明：输入路径，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可删除此文件夹内及子文件夹内所有临时文件：.aux, .bbl, .bcf, .blg, .out, .run.xml, .synctex.gz \n在更换设备并要修改tex或bib时使用，避免编译出现问题。"
         self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
 
