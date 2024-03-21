@@ -10,6 +10,7 @@ import compileallpdf
 import singlecheck
 import charti_build_content
 import c_bibtex
+import deletetemp
 
 # 定义一个主窗口类，继承自tk.Tk
 class MainWindow(tk.Tk):
@@ -29,7 +30,8 @@ class MainWindow(tk.Tk):
         self.tab3 = CompTab(self.tab_control, "编译全部", self.run_tab3)
         self.tab4 = SingleTab(self.tab_control, "检查单字成行", self.run_tab4)
         self.tab5 = IndexTab(self.tab_control, "生成目录", self.run_tab5)
-        self.tab6 = CbibtexTab(self.tab_control, "中文参考文献快速转bibtex", self.run_tab6)
+        self.tab6 = CbibtexTab(self.tab_control, "快速bibtex", self.run_tab6)
+        self.tab7 = DelTab(self.tab_control, "删除临时文件", self.run_tab7)
         # 添加标签页到标签框架
         self.tab_control.add(self.tab1, text=self.tab1.name)
         self.tab_control.add(self.tab2, text=self.tab2.name)
@@ -37,6 +39,7 @@ class MainWindow(tk.Tk):
         self.tab_control.add(self.tab4, text=self.tab4.name)
         self.tab_control.add(self.tab5, text=self.tab5.name)
         self.tab_control.add(self.tab6, text=self.tab6.name)
+        self.tab_control.add(self.tab7, text=self.tab7.name)
         # 显示标签框架
         self.tab_control.pack(expand=1, fill="both")
 
@@ -77,9 +80,14 @@ class MainWindow(tk.Tk):
         charti_build_content.generate_tex(file_path,"ch",self.output_text)
 
     def run_tab6(self):
-        run_info(self.output_text,"运行中文文献bibtex的函数\n")
+        run_info(self.output_text,"运行快速bibtex的函数\n")
         file_path = self.tab6.entry.get()
         c_bibtex.cbibtex_process_file(file_path, self.output_text)
+
+    def run_tab7(self):
+        run_info(self.output_text,"删除临时文件\n")
+        file_path = self.tab7.entry.get()
+        deletetemp.delete_main(file_path, self.output_text)
 
         
 
@@ -173,7 +181,7 @@ class CbibtexTab(TabPage):
     def __init__(self, parent, name, run_function):
         super().__init__(parent, name, run_function)
         # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
-        instruction_text = "使用说明：对于大量例如:\n[45]孙中原，“日本学者对中国古代逻辑的研究”，国外社会科学，1983年第4期，第62-65页。\n的中文参考文献，可尝试使用该功能快速转换为bibtex格式，再进行手动修改。\n注意输入完整路径，例如：E:\Github\Studies_in_Logic\\2023年第2期(69)\文件.txt"
+        instruction_text = "使用说明：把word的参考文献复制到单独的txt文件中保存，用该功能快速转换为bibtex格式，再进行手动修改，或再丢给chatGPT修改\n 注意输入完整路径，例如：E:\Github\Studies_in_Logic\\2023年第2期(69)\文件.txt"
         self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
         self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
     # 重定义读取文件
@@ -181,6 +189,15 @@ class CbibtexTab(TabPage):
         path = fd.askopenfilename(filetypes=[("txt", "*.txt")])
         self.entry.delete(0, tk.END)
         self.entry.insert(0, path)
+
+# 删除临时文件tab类
+class DelTab(TabPage):
+    def __init__(self, parent, name, run_function):
+        super().__init__(parent, name, run_function)
+        # 在标签页上创建一个额外的说明标签，用于显示更多的使用说明
+        instruction_text = "使用说明：输入路径为一期的目录，例如：\n E:\Github\Studies_in_Logic\\2023年第2期(69)，点击运行则可删除所有临时文件"
+        self.additional_instruction = ttk.Label(self, text=str(instruction_text), wraplength=500-20)
+        self.additional_instruction.grid(column=0, row=5, padx=10, pady=10)
 
 
 # 创建主窗口对象并运行主循环
